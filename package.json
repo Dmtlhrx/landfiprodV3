@@ -1,0 +1,61 @@
+{
+  "name": "hedera-africa-dapp",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --parallel --recursive dev",
+    "build": "pnpm --recursive build",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "start": "pnpm --filter @hedera-africa/api start",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "setup": "pnpm install && pnpm --recursive setup",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/sharp": "^0.32.0",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "0.25.9",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "postcss": "^8.5.6",
+    "prettier": "^3.1.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@fastify/multipart": "^8.3.1",
+    "@fastify/websocket": "^11.2.0",
+    "@hashgraph/sdk": "^2.72.0",
+    "@hookform/resolvers": "^3.10.0",
+    "@railway/cli": "^4.7.3",
+    "@tanstack/react-query": "^5.87.4",
+    "axios": "^1.12.0",
+    "bcryptjs": "^3.0.2",
+    "exif-reader": "^2.0.2",
+    "framer-motion": "^10.18.0",
+    "i18next": "^25.5.2",
+    "lucide": "^0.542.0",
+    "nodemailer": "^7.0.10",
+    "prisma": "^5.22.0",
+    "react-hot-toast": "^2.6.0",
+    "sharp": "^0.34.4",
+    "tesseract.js": "^6.0.1",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}

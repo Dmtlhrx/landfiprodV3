@@ -1,0 +1,444 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  passwordHash String
+  displayName  String
+  walletHedera String? @unique
+  role         Role    @default(USER)
+  did          String?
+  
+  // Vérification d'email
+  emailVerified              Boolean   @default(false)
+  emailVerificationToken     String?   @unique
+  emailVerificationExpires   DateTime?
+  
+  // Réinitialisation de mot de passe
+  passwordResetToken         String?   @unique
+  passwordResetExpires       DateTime?
+  
+  // Reputation system
+  reputationScore            Int       @default(0)
+  completedLoans             Int       @default(0)
+  defaultedLoans             Int       @default(0)
+  verifiedTransactions       Int       @default(0)
+  communityEndorsements      Int       @default(0)
+  riskLevel                  RiskLevel @default(MEDIUM)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  parcels              Parcel[]
+  borrowedLoans        P2PLoan[]     @relation("BorrowerLoans")
+  lentLoans            P2PLoan[]     @relation("LenderLoans")
+  loanOffers           LoanOffer[]
+  loans                Loan[]
+  endorsements         Endorsement[] @relation("EndorsementReceiver")
+  givenEndorsements    Endorsement[] @relation("EndorsementGiver")
+  sentMessages         ChatMessage[] @relation("SentMessages")
+  chatParticipants     ChatParticipant[]
+  aiVerifications      AIVerificationLog[]
+
+  @@index([emailVerified])
+  @@index([emailVerificationToken])
+  @@index([passwordResetToken])
+  @@map("users")
+}
+
+model Parcel {
+  id          String   @id @default(cuid())
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  latitude    Float
+  longitude   Float
+  areaM2      Int
+  docUrl      String?
+  htsTokenId  String?
+  priceUsd    Int?
+  status      ParcelStatus @default(DRAFT)
+  
+  // Verification system
+  verificationType     VerificationType @default(UNVERIFIED)
+  verificationDetails  Json?
+  riskAssessment       RiskLevel @default(MEDIUM)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  activities       Activity[]
+  p2pLoans         P2PLoan[]
+  loans            Loan[]
+  documents        Document[]
+  chatConversations ChatConversation[]
+
+  @@index([ownerId])
+  @@map("parcels")
+}
+
+// Ajout dans le model Document
+model Document {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  type         String
+  size         Int
+  url          String
+  
+  parcelId     String
+  parcel       Parcel   @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  
+  // Champs pour vérification IA - AMÉLIORÉS
+  aiVerification Json?
+  verifiedAt     DateTime?
+  isAuthentic    Boolean?
+  confidenceScore Int?
+  manipulationDetected Boolean? @default(false)
+  
+  // NOUVEAUX CHAMPS pour affichage professionnel
+  verificationStatus VerificationStatus @default(PENDING)
+  riskLevel         DocumentRiskLevel  @default(UNKNOWN)
+  riskScore         Int?               // 0-100
+  findings          Json?              // Array de findings
+  extractedEntities Json?              // Entities extraites
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([parcelId])
+  @@index([isAuthentic])
+  @@index([manipulationDetected])
+  @@index([verificationStatus])
+  @@index([riskLevel])
+  @@map("documents")
+}
+
+
+model P2PLoan {
+  id          String  @id @default(cuid())
+  borrowerId  String
+  borrower    User    @relation("BorrowerLoans", fields: [borrowerId], references: [id], onDelete: Cascade)
+  lenderId    String?
+  lender      User?   @relation("LenderLoans", fields: [lenderId], references: [id])
+  parcelId    String
+  parcel      Parcel  @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  
+  // Loan details
+  principalUsd     Int
+  interestRate     Float
+  duration         Int
+  collateralRatio  Float
+  status           LoanStatus @default(OPEN)
+  
+  // Terms
+  terms            Json
+  repaymentSchedule Json?
+  
+  // Dates
+  createdAt        DateTime @default(now())
+  fundedAt         DateTime?
+  dueDate          DateTime?
+  
+  // Relations
+  offers           LoanOffer[]
+  activities       Activity[]
+  chatConversations ChatConversation[]
+
+  @@index([borrowerId])
+  @@index([lenderId])
+  @@map("p2p_loans")
+}
+
+model LoanOffer {
+  id            String    @id @default(cuid())
+  loanId        String
+  loan          P2PLoan   @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  lenderId      String
+  lender        User      @relation(fields: [lenderId], references: [id], onDelete: Cascade)
+  
+  offeredAmount Int
+  interestRate  Float
+  terms         String
+  status        OfferStatus @default(PENDING)
+  
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime
+
+  @@map("loan_offers")
+}
+
+model Endorsement {
+  id          String   @id @default(cuid())
+  giverId     String
+  giver       User     @relation("EndorsementGiver", fields: [giverId], references: [id], onDelete: Cascade)
+  receiverId  String
+  receiver    User     @relation("EndorsementReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  
+  type        EndorsementType
+  rating      Int
+  comment     String?
+  transactionRef String?
+  
+  createdAt   DateTime @default(now())
+
+  @@unique([giverId, receiverId, transactionRef])
+  @@map("endorsements")
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  parcelId  String?
+  parcel    Parcel?  @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  loanId    String?
+  loan      P2PLoan? @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  
+  type      String
+  ref       String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@map("activities")
+}
+
+model Loan {
+  id            String     @id @default(cuid())
+  borrowerId    String
+  parcelId      String
+  principalUsd  Float
+  ltvBps        Int
+  rateAprBps    Int
+  status        LoanStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  borrower      User       @relation(fields: [borrowerId], references: [id], onDelete: Cascade)
+  parcel        Parcel     @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+
+  @@map("loans")
+}
+
+// Chat System
+model ChatConversation {
+  id            String   @id @default(cuid())
+  
+  type          ChatType @default(GROUP)
+  name          String?
+  
+  parcelId      String?
+  parcel        Parcel?  @relation(fields: [parcelId], references: [id], onDelete: SetNull)
+  
+  loanId        String?
+  loan          P2PLoan? @relation(fields: [loanId], references: [id], onDelete: SetNull)
+  
+  participants  ChatParticipant[]
+  messages      ChatMessage[]
+  
+  createdBy     String
+  lastMessageAt DateTime?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([parcelId])
+  @@index([loanId])
+  @@index([type])
+  @@map("chat_conversations")
+}
+
+model ChatParticipant {
+  id              String   @id @default(cuid())
+  
+  conversationId  String
+  conversation    ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  role            ParticipantRole @default(MEMBER)
+  
+  lastReadAt      DateTime?
+  unreadCount     Int      @default(0)
+  
+  joinedAt        DateTime @default(now())
+  leftAt          DateTime?
+  isActive        Boolean  @default(true)
+  
+  @@unique([conversationId, userId])
+  @@index([userId])
+  @@map("chat_participants")
+}
+
+model ChatMessage {
+  id                String   @id @default(cuid())
+  
+  conversationId    String?
+  conversation      ChatConversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  senderId          String
+  sender            User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  
+  content           String?  @db.Text
+  messageType       String   @default("TEXT")
+  
+  fileUrl           String?
+  fileName          String?
+  fileSize          Int?
+  mimeType          String?
+  
+  isRead            Boolean  @default(false)
+  isEdited          Boolean  @default(false)
+  editedAt          DateTime?
+  
+  replyToId         String?
+  replyTo           ChatMessage?  @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies           ChatMessage[] @relation("MessageReplies")
+  
+  reactions         Json?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([replyToId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+model ChatEvent {
+  id              String   @id @default(cuid())
+  
+  conversationId  String
+  userId          String
+  
+  type            String
+  
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+  
+  @@index([conversationId, userId])
+  @@index([expiresAt])
+  @@map("chat_events")
+}
+
+model AIVerificationLog {
+  id           String   @id @default(cuid())
+  documentId   String?
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Résultat
+  isAuthentic  Boolean
+  confidenceScore Int
+  manipulationDetected Boolean
+  
+  // Détails techniques
+  findings     Json
+  risks        Json
+  extractedData Json
+  technicalDetails Json
+  
+  // Métadonnées
+  filename     String
+  fileSize     Int
+  mimeType     String
+  
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([isAuthentic])
+  @@index([manipulationDetected])
+  @@index([createdAt])
+  @@map("ai_verification_logs")
+}
+
+// Enums
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ParcelStatus {
+  DRAFT
+  LISTED
+  SOLD
+  COLLATERALIZED
+  MINTED
+}
+
+enum VerificationType {
+  VERIFIED
+  UNVERIFIED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum LoanStatus {
+  OPEN
+  FUNDED
+  ACTIVE
+  REPAID
+  DEFAULTED
+  LIQUIDATED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum EndorsementType {
+  TRUSTWORTHY
+  RELIABLE_BORROWER
+  FAIR_LENDER
+  LAND_EXPERT
+  COMMUNITY_MEMBER
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum ParticipantRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+  GUEST
+}
+
+
+// Nouveaux enums
+enum VerificationStatus {
+  PENDING       // En attente de vérification
+  PROCESSING    // Vérification en cours
+  VERIFIED      // Vérifié avec succès
+  FAILED        // Échec de la vérification
+  SUSPICIOUS    // Document suspect
+}
+
+enum DocumentRiskLevel {
+  UNKNOWN       // Pas encore analysé
+  VERY_LOW      // 0-20% de risque
+  LOW           // 21-40% de risque
+  MEDIUM        // 41-60% de risque
+  HIGH          // 61-80% de risque
+  CRITICAL      // 81-100% de risque
+}

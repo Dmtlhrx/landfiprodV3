@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: hedera-postgres
+    environment:
+      POSTGRES_USER: hedera_user
+      POSTGRES_PASSWORD: hedera_pass
+      POSTGRES_DB: hedera_africa
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: hedera-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@hedera-africa.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    container_name: hedera-api
+    environment:
+      DATABASE_URL: postgresql://hedera_user:hedera_pass@postgres:5432/hedera_africa
+      HEDERA_NETWORK: testnet
+      JWT_SECRET: your-super-secret-jwt-key-change-this
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

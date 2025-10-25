@@ -1,0 +1,15 @@
+# Database
+DATABASE_URL="postgresql://hedera_user:hedera_pass@localhost:5432/hedera_africa"
+
+# Hedera Configuration
+HEDERA_NETWORK="testnet"
+HEDERA_OPERATOR_ID="0.0.YOUR_OPERATOR_ID"
+HEDERA_OPERATOR_KEY="YOUR_OPERATOR_PRIVATE_KEY"
+HCS_TOPIC_ID="0.0.YOUR_TOPIC_ID"
+
+# JWT
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+
+# API
+API_URL="http://localhost:3001"
+CORS_ORIGIN="http://localhost:5173"
