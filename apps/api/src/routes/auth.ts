@@ -9,12 +9,15 @@ import crypto from 'crypto';
 
 // Email configuration
 const emailTransporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE || 'gmail',
+  host: process.env.EMAIL_HOST || 'smtp.hostinger.com',
+  port: Number(process.env.EMAIL_PORT) || 465,
+  secure: true, // true pour le port 465 (SSL)
   auth: {
-    user: process.env.EMAIL_USER,
+    user: process.env.EMAIL_USER, // ex: noreply@landfi.tiic-system.com
     pass: process.env.EMAIL_PASSWORD,
   },
 });
+
 
 const schemas = {
   register: z.object({
@@ -39,7 +42,7 @@ const schemas = {
 };
 
 async function sendEmailVerification(email: string, token: string) {
-  const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
+  const verifyLink = `https://landfi.tiic-system.com/auth/verify-email?token=${token}`;
   
   await emailTransporter.sendMail({
     from: process.env.EMAIL_USER,
@@ -62,7 +65,7 @@ async function sendEmailVerification(email: string, token: string) {
 }
 
 async function sendPasswordReset(email: string, token: string) {
-  const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
+  const resetLink = `https://landfi.tiic-system.com/auth/reset-password?token=${token}`;
   
   await emailTransporter.sendMail({
     from: process.env.EMAIL_USER,
