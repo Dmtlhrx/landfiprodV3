@@ -2,6 +2,9 @@
 
 A comprehensive land tokenization platform built on Hedera Hashgraph for the African market.
 
+### Quick Start for Judges
+
+**Important**: The live demo backend is hosted on Render's free tier and may enter sleep mode after inactivity. If you encounter connection issues on first access, please wait 2 minutes for the server to wake up and retry.
 
 ### Testing Instructions
 To quickly test this project:
@@ -9,23 +12,24 @@ To quickly test this project:
 2. Start with Docker: `pnpm docker:up && pnpm dev`
 3. Access at: http://localhost:5173
 4. Use demo credentials: demo@LandFi-africa.com password: Demo123!
+5. [Live Demo](https://landfi.tiic-system.com)
 
 
 ##  Hedera Hack Africa Submission
 
-### * Pitch Deck
+###  Pitch Deck
 [View our Pitch Deck](https://www.canva.com/design/DAGzXfego8g/B-JeR3sTUIJRgLzVIiPF4w/view?utm_content=DAGzXfego8g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8208b16287#19)
 ###  Certifications
 - [Hedera Certification ](https://explore.hashpack.app/nft/0.0.3872504/12026)
 
 ###  Team
-- c.Dimitri rock Dossa  - dev fullstack - [GitHub](https://github.com/Dmtlhrx/) | [LinkedIn](https://www.linkedin.com/in/dimitriblockchain/)
+- C. Dimitri rock Dossa  - dev fullstack - project manager - [GitHub](https://github.com/Dmtlhrx/) | [LinkedIn](https://www.linkedin.com/in/dimitriblockchain/)
 
 - Geovany Bignon - designer graphic - [LinkedIn](https://www.linkedin.com/in/geovany-bignon-9987b5367/)
 
--Bellevie AGBALE UI/UX Designer - https://www.linkedin.com/in/bellevie-agbale/
+- Bellevie AGBALE UI/UX Designer - https://www.linkedin.com/in/bellevie-agbale/
 
--Esther Houndonougbo  - SMM , business  - developer https://www.linkedin.com/in/estherhoundonougbo/
+- Esther Houndonougbo  - SMM , business developer https://www.linkedin.com/in/estherhoundonougbo/
 
 ###  Demo Video
 [Watch our Demo](https://youtu.be/VJq1t1nyS0c?si=w9X0zP_x8L3-sjXz)
