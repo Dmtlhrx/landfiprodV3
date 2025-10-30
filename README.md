@@ -14,10 +14,7 @@ To quickly test this project:
 ##  Hedera Hack Africa Submission
 
 ### * Pitch Deck
-[View our Pitch Deck]
-
-https://www.canva.com/design/DAGzXfego8g/B-JeR3sTUIJRgLzVIiPF4w/view?utm_content=DAGzXfego8g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8208b16287#19
-
+[View our Pitch Deck](https://www.canva.com/design/DAGzXfego8g/B-JeR3sTUIJRgLzVIiPF4w/view?utm_content=DAGzXfego8g&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8208b16287#19)
 ###  Certifications
 - [Hedera Certification ](https://explore.hashpack.app/nft/0.0.3872504/12026)
 
@@ -488,7 +485,7 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 🐛 Known Issues
+##  Known Issues
 
 - [ ] Wallet connection sometimes requires page refresh
 - [ ] Large file uploads may timeout (working on chunked uploads)
@@ -497,7 +494,7 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 ### Phase 1 (Current) - MVP
 - [x] Land tokenization with HTS
@@ -525,7 +522,7 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 📊 Architecture Diagram
+##  Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -552,7 +549,7 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 🏆 Hackathon Highlights
+##  Hackathon Highlights
 
 ### Why This Project Stands Out
 
@@ -574,13 +571,13 @@ We welcome contributions! Please follow these steps:
 
 
 
-## 📝 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Hedera Hashgraph** - For providing enterprise-grade DLT infrastructure
 - **HashPack** - For secure wallet integration
@@ -590,7 +587,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 Links
+##  Links
 
 - [Live Demo](https://landfi.tiic-system.com)
 
