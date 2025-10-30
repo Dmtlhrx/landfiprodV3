@@ -243,6 +243,7 @@ pnpm lint             # Lint all code
 pnpm prisma:generate  # Generate Prisma client
 pnpm prisma:migrate   # Run migrations
 pnpm prisma:studio    # Open Prisma Studio
+pnpm db:seed          # Create demo user
 
 # Docker
 pnpm docker:up        # Start all services
