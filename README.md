@@ -23,7 +23,7 @@ To quickly test this project:
 - [Hedera Certification ](https://explore.hashpack.app/nft/0.0.3872504/12026)
 
 ###  Team
-- C. Dimitri rock Dossa  - dev fullstack - project manager - [GitHub](https://github.com/Dmtlhrx/) | [LinkedIn](https://www.linkedin.com/in/dimitriblockchain/)
+- C. Dimitri rock Dossa  - dev fullstack - project manager - Web3 & Blockchain Strategist - [GitHub](https://github.com/Dmtlhrx/) | [LinkedIn](https://www.linkedin.com/in/dimitriblockchain/)
 
 - Geovany Bignon - designer graphic - [LinkedIn](https://www.linkedin.com/in/geovany-bignon-9987b5367/)
 
